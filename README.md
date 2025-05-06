@@ -1,0 +1,47 @@
+## Reproduce issue
+
+run:
+
+```sh
+./run.sh
+```
+
+## Actual results
+
+```
+aa
+null
+```
+
+## Expected results
+
+```
+aa
+aa
+```
+
+```sh
+javac -d out src/com/example/Application.java src/com/example/MyIssue.java   
+java -cp out com.example.Application
+```
+
+There are three things that come into play in here:
+
+1. static block initialization
+   In Java, when a static field has a complex initialization, the compiler may move it into a static block instead of
+   keeping it inline. This happens due to the way Java handles class loading and initialization.
+   When a field involves method calls, object creation, or lambda expressions, the compiler often moves it into a static
+   block.
+2. interface and inner classes static blocks initialization
+   Interfaces are not "instantiated" in the same way as classes, but their static blocks execute when:
+    - A static field or method in the interface is accessed.
+    - A class implementing the interface is loaded.
+
+   Static blocks in an interface execute when the interface is first used.
+   Inner static classes are independent—their static blocks execute only when the inner class is accessed for the first
+   time.
+   If the interface's static block relies on a static field or method from its inner static class, the inner class gets
+   initialized first before the interface.
+   Java loads classes and executes their static initializers in the order they appear in the source code.
+   **Java ensures that referenced classes are initialized before they are accessed.**
+3. default method in the interface that messes with static block initialization
