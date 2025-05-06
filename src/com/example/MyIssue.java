@@ -1,6 +1,6 @@
 package com.example;
 
-public sealed interface MyIssue {
+public interface MyIssue {
 	String schema = MyIssue.A.schema;
 
 	// commenting out below method fixes the issue

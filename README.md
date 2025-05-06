@@ -27,6 +27,8 @@ aa
 aa
 ```
 
+Tested on: openjdk 8,11,17,21,23
+
 Summary:
 
 The sheer fact that the interface defines a default method influences how the static fields gets initialized and breaks the initialization chain.
