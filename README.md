@@ -6,6 +6,13 @@ run:
 ./run.sh
 ```
 
+which is a shortcut for:
+
+```sh
+javac -d out src/com/example/Application.java src/com/example/MyIssue.java
+java -cp out com.example.Application
+```
+
 ## Actual results
 
 ```
@@ -20,10 +27,13 @@ aa
 aa
 ```
 
-```sh
-javac -d out src/com/example/Application.java src/com/example/MyIssue.java   
-java -cp out com.example.Application
-```
+Summary:
+
+The sheer fact that the interface defines a default method influences how the static fields gets initialized and breaks the initialization chain.
+
+---
+
+My more-or-less correct understanding of things:
 
 There are three things that come into play in here:
 
@@ -34,8 +44,9 @@ There are three things that come into play in here:
    block.
 2. interface and inner classes static blocks initialization
    Interfaces are not "instantiated" in the same way as classes, but their static blocks execute when:
-    - A static field or method in the interface is accessed.
-    - A class implementing the interface is loaded.
+
+   - A static field or method in the interface is accessed.
+   - A class implementing the interface is loaded.
 
    Static blocks in an interface execute when the interface is first used.
    Inner static classes are independent—their static blocks execute only when the inner class is accessed for the first
@@ -44,4 +55,5 @@ There are three things that come into play in here:
    initialized first before the interface.
    Java loads classes and executes their static initializers in the order they appear in the source code.
    **Java ensures that referenced classes are initialized before they are accessed.**
-3. default method in the interface that messes with static block initialization
+
+3. Existance of default method in the interface that messes with static block initialization
